@@ -26,6 +26,11 @@ public final class LongArrays {
     private static final int BUCKETS = 1 << BITS_PER_BUCKET;
     
     /**
+     * The mask for extracting the (shifted) sign bit.
+     */
+    private static final int SIGN_BIT_MASK = 0b1000_0000;
+    
+    /**
      * The mask for extracting the appropriate bucket index.
      */
     private static final int BUCKET_MASK = BUCKETS - 1;
@@ -58,7 +63,12 @@ public final class LongArrays {
                                Runtime.getRuntime().availableProcessors());
         
         threads = Math.max(1, threads);
-        parallelSortImplTop(array, buffer, threads, fromIndex, toIndex);
+        
+        parallelSortImplTop(array,
+                            buffer, 
+                            threads, 
+                            fromIndex, 
+                            toIndex);
     }
 
     public static final boolean areEqual(final long[]... arrays) {
@@ -934,7 +944,7 @@ public final class LongArrays {
         final int bucketIndex = (int)(key >>> 56);
         // Flip the most significant (8th) bit in order to push the negative
         // keys before the positive ones:
-        return bucketIndex ^ 0b1000_0000;
+        return bucketIndex ^ SIGN_BIT_MASK;
     }
 
     private static final int getBucket(final long key, 

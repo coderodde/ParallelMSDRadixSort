@@ -27,8 +27,6 @@ public final class ParallelMSDRadixSortDemo {
     }
     
     public static void main(String[] args) {
-//        System.out.println(Integer.toHexString(getBucketTop(0x7f00000ab0000000L)));
-//        System.out.println(Integer.toHexString(getBucket(0xAABBCCL, 7)));
         runOnLongArrays(false);
         System.out.println();
         runOnLongArrays(true);
