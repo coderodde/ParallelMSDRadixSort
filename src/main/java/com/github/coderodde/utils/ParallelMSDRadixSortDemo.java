@@ -10,11 +10,34 @@ import java.util.Random;
 public final class ParallelMSDRadixSortDemo {
     
     private static final int LENGTH = 50_000_000;
+    static final int BUCKET_MASK = 255;
+    static final int BITS_PER_BUCKET = 8;
+    
+    private static final int getBucketTop(final long key) {
+        final int bucketIndex = (int)(key >>> 56);
+        // Flip the most significant (8th) bit in order to push the negative
+        // keys before the positive ones:
+        return bucketIndex ^ 0b1000_0000;
+    }
+
+    private static final int getBucket(final long key, 
+                                       final int recursionDepth) {
+        final int bitShift = 64 - (recursionDepth + 1) * BITS_PER_BUCKET;
+        return (int)(key >>> bitShift) & BUCKET_MASK;
+    }
     
     public static void main(String[] args) {
+//        System.out.println(Integer.toHexString(getBucketTop(0x7f00000ab0000000L)));
+//        System.out.println(Integer.toHexString(getBucket(0xAABBCCL, 7)));
         runOnLongArrays(false);
         System.out.println();
         runOnLongArrays(true);
+        
+        long startTime = System.nanoTime();
+        System.gc();
+        long endTime = System.nanoTime();
+        System.out.println(
+                "GC in " + ((endTime - startTime) / 1000_000L) + " ms.");
         
         System.out.println("\n\n");
         
@@ -68,7 +91,7 @@ public final class ParallelMSDRadixSortDemo {
     }
     
     private static void runOnLongArrays(boolean printStatistics) {
-        long seed = System.currentTimeMillis();
+        long seed = 1592224597337L; //System.currentTimeMillis();
         Random random = new Random(seed);
         System.out.println("seed = " +  seed);
         
