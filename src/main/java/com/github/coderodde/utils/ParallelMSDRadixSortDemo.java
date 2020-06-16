@@ -9,51 +9,32 @@ import java.util.Random;
  */
 public final class ParallelMSDRadixSortDemo {
     
-    private static final int LENGTH = 50_000_000;
-    static final int BUCKET_MASK = 255;
-    static final int BITS_PER_BUCKET = 8;
-    
-    private static final int getBucketTop(final long key) {
-        final int bucketIndex = (int)(key >>> 56);
-        // Flip the most significant (8th) bit in order to push the negative
-        // keys before the positive ones:
-        return bucketIndex ^ 0b1000_0000;
-    }
-
-    private static final int getBucket(final long key, 
-                                       final int recursionDepth) {
-        final int bitShift = 64 - (recursionDepth + 1) * BITS_PER_BUCKET;
-        return (int)(key >>> bitShift) & BUCKET_MASK;
-    }
+    private static final int ARRAY_LENGTH = 50_000_000;
     
     public static void main(String[] args) {
         runOnLongArrays(false);
         System.out.println();
         runOnLongArrays(true);
         
-        long startTime = System.nanoTime();
         System.gc();
-        long endTime = System.nanoTime();
-        System.out.println(
-                "GC in " + ((endTime - startTime) / 1000_000L) + " ms.");
-        
-        System.out.println("\n\n");
+        System.out.println();
+        System.out.println();
         
         runOnIntArrays(false);
         System.out.println();
         runOnIntArrays(true);
     }
     
-    private static void runOnIntArrays(boolean printStatistics) {
+    private static void runOnIntArrays(boolean isBenchmark) {
         long seed = System.currentTimeMillis();
         Random random = new Random(seed);
         System.out.println("seed = " +  seed);
         
-        int[] arr1 = getRandomIntArray(LENGTH, random);
+        int[] arr1 = getRandomIntArray(ARRAY_LENGTH, random);
         int[] arr2 = arr1.clone();
         int[] arr3 = arr1.clone();
         
-        if (printStatistics) {
+        if (isBenchmark) {
             System.out.println("Benchmarking on int arrays...");
         } else {
             System.out.println("Warming up on int arrays...");
@@ -77,27 +58,25 @@ public final class ParallelMSDRadixSortDemo {
     
         long duration3 = (endTime - startTime) / 1_000_000L;
         
-        if (printStatistics) {
-            System.out.println("coderodde's Arrays.parallelSort: " + duration1);
-            System.out.println("Java's Arrays.parallelSort     : " + duration2);
-            System.out.println("Java's Arrays.sort             : " + duration3);
-            System.out.println(
-                    com.github.coderodde.utils.Arrays.Int.areEqual(arr1,
-                                                                   arr2,
-                                                                   arr3));
-        }
+        System.out.println("coderodde's Arrays.parallelSort: " + duration1);
+        System.out.println("java.util.Arrays.parallelSort  : " + duration2);
+        System.out.println("java.util.Arrays.sort          : " + duration3);
+        System.out.println("Algorithms agree               : " +
+                com.github.coderodde.utils.Arrays.Int.areEqual(arr1,
+                                                               arr2,
+                                                               arr3));
     }
     
-    private static void runOnLongArrays(boolean printStatistics) {
-        long seed = 1592224597337L; //System.currentTimeMillis();
+    private static void runOnLongArrays(boolean isBenchmark) {
+        long seed = System.currentTimeMillis();
         Random random = new Random(seed);
         System.out.println("seed = " +  seed);
         
-        long[] arr1 = getRandomLongArray(LENGTH, random);
+        long[] arr1 = getRandomLongArray(ARRAY_LENGTH, random);
         long[] arr2 = arr1.clone();
         long[] arr3 = arr1.clone();
         
-        if (printStatistics) {
+        if (isBenchmark) {
             System.out.println("Benchmarking on long arrays...");
         } else {
             System.out.println("Warming up on long arrays...");
@@ -121,15 +100,13 @@ public final class ParallelMSDRadixSortDemo {
     
         long duration3 = (endTime - startTime) / 1_000_000L;
         
-        if (printStatistics) {
-            System.out.println("coderodde's Arrays.parallelSort: " + duration1);
-            System.out.println("Java's Arrays.parallelSort     : " + duration2);
-            System.out.println("Java's Arrays.sort             : " + duration3);
-            System.out.println(
-                    com.github.coderodde.utils.Arrays.Long.areEqual(arr1,
-                                                                    arr2,
-                                                                    arr3));
-        }
+        System.out.println("coderodde's Arrays.parallelSort: " + duration1);
+        System.out.println("java.util.Arrays.parallelSort  : " + duration2);
+        System.out.println("java.util.Arrays.sort          : " + duration3);
+        System.out.println("Algorithms agree               : " +
+                com.github.coderodde.utils.Arrays.Long.areEqual(arr1,
+                                                                arr2,
+                                                                arr3));
     }
     
     private static long[] getRandomLongArray(int length, Random random) {
