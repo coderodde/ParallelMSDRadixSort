@@ -10,6 +10,8 @@ import java.util.Random;
 public final class ParallelMSDRadixSortDemo {
     
     private static final int ARRAY_LENGTH = 50_000_000;
+    private static final int FROM_INDEX = 13;
+    private static final int TO_INDEX = ARRAY_LENGTH - 11;
     
     public static void main(String[] args) {
         runOnLongArrays(false);
@@ -41,19 +43,27 @@ public final class ParallelMSDRadixSortDemo {
         }
         
         long startTime = System.nanoTime();
-        com.github.coderodde.utils.Arrays.Int.parallelSort(arr1);
+        com.github.coderodde.utils.Arrays.Int.parallelSort(arr1,
+                                                           FROM_INDEX,
+                                                           TO_INDEX);
         long endTime = System.nanoTime();
         
         long duration1 = (endTime - startTime) / 1_000_000L;
         
         startTime = System.nanoTime();
-        java.util.Arrays.parallelSort(arr2);
+        java.util.Arrays.parallelSort(arr2,
+                                      FROM_INDEX,
+                                      TO_INDEX);
+        
         endTime = System.nanoTime();
         
         long duration2 = (endTime - startTime) / 1_000_000L;
         
         startTime = System.nanoTime();
-        java.util.Arrays.sort(arr3);
+        java.util.Arrays.sort(arr3, 
+                              FROM_INDEX, 
+                              TO_INDEX);
+        
         endTime = System.nanoTime();
     
         long duration3 = (endTime - startTime) / 1_000_000L;
@@ -83,19 +93,27 @@ public final class ParallelMSDRadixSortDemo {
         }
         
         long startTime = System.nanoTime();
-        com.github.coderodde.utils.Arrays.Long.parallelSort(arr1);
+        com.github.coderodde.utils.Arrays.Long.parallelSort(arr1, 
+                                                            FROM_INDEX, 
+                                                            TO_INDEX);
         long endTime = System.nanoTime();
         
         long duration1 = (endTime - startTime) / 1_000_000L;
         
         startTime = System.nanoTime();
-        java.util.Arrays.parallelSort(arr2);
+        java.util.Arrays.parallelSort(arr2,
+                                      FROM_INDEX,
+                                      TO_INDEX);
+        
         endTime = System.nanoTime();
         
         long duration2 = (endTime - startTime) / 1_000_000L;
         
         startTime = System.nanoTime();
-        java.util.Arrays.sort(arr3);
+        java.util.Arrays.sort(arr3,
+                              FROM_INDEX, 
+                              TO_INDEX);
+        
         endTime = System.nanoTime();
     
         long duration3 = (endTime - startTime) / 1_000_000L;
